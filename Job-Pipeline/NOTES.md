@@ -2,8 +2,10 @@
 
 ## Current Status
 - **Phase 1.4/1.5:** Dashboard + Server — COMPLETE
+- **Phase 2:** Job Scorer Agent — COMPLETE
 - **Phase 3:** Copy Prompt for Cowork — COMPLETE
-- **Phase 6:** Feedback Analyzer — SCHEMA READY, MCP integration pending
+- **Phase 5:** MCP Server (Claude Desktop integration) — COMPLETE
+- **Phase 6:** Feedback Analyzer — COMPLETE (schema + CLI + MCP tool)
 
 ---
 
@@ -65,21 +67,28 @@ FROM jobs
 GROUP BY template_version;
 ```
 
-### Future MCP Integration
-When the Feedback Analyzer MCP is built:
-1. It will connect to `pipeline.db` via the SQLite MCP server
-2. When a rejection or interview request is logged, it will:
-   - Update the job status in the database
-   - Query `template_metrics` view for aggregated stats
-   - Return the current conversion rates by template version
-3. This enables real-time feedback on which cover letter approach works best
+### MCP Integration — COMPLETE
+The `log_outcome` MCP tool handles this:
+1. When Wolf gets a rejection or interview request, tell Claude Desktop: "Log a rejection for job 4"
+2. The tool updates the job status in the database
+3. Automatically queries `template_metrics` and returns current conversion rates by template version
+4. Real-time feedback on which cover letter approach works best
 
-### MCP Server Configuration (Future)
+### MCP Server Setup
 ```bash
-claude mcp add sqlite -- npx -y @modelcontextprotocol/server-sqlite ~/Job-Pipeline/pipeline.db
+claude mcp add job-pipeline -- node ~/Archive-35/Job-Pipeline/mcp-server.js
 ```
 
-This gives Claude Desktop direct access to query the pipeline database.
+**9 tools available in Claude Desktop:**
+- `pipeline_stats` — Get pipeline overview
+- `list_jobs` — List/filter jobs
+- `get_job` — Full job detail
+- `add_job` — Add new job
+- `update_job` — Update status/score/notes
+- `log_outcome` — Log rejection or interview (triggers Feedback Analyzer)
+- `template_metrics` — Conversion rates by template version
+- `generate_cover_letter_prompt` — Generate P→P→R prompt for a job
+- `search_qa_bank` — Search interview Q&A bank
 
 ---
 
@@ -105,9 +114,14 @@ Job-Pipeline/
 ├── package.json              # Dependencies: express, better-sqlite3, cors
 ├── server.js                 # Express server with REST API
 ├── init-db.js                # Database initialization + seed data
-├── feedback-analyzer.js      # Phase 6: Template version analysis
+├── job-scorer.js             # Job scoring agent (keyword + weighted analysis)
+├── mcp-server.js             # MCP server for Claude Desktop
+├── feedback-analyzer.js      # Phase 6: Template version analysis CLI
+├── test-all.js               # Integration test suite
 ├── PIPELINE_DASHBOARD.html   # Single-file dashboard UI
 ├── NOTES.md                  # This file
+├── README.md                 # Project documentation
+├── LESSONS_LEARNED.md        # What's working playbook
 ├── pipeline.db               # SQLite database (created by init-db.js)
 └── prompts/
     └── cover-letter-template.md  # P→P→R cover letter master prompt
