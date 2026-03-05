@@ -113,7 +113,7 @@ Load this file when Wolf is preparing for interviews, crafting positioning state
 ## Salary/Comp Framework
 
 Wolf's target range (LA market, VP Engineering):
-- Base: $275K-$350K
+- Base: $230K-$350K
 - Bonus: 20-30%
 - Equity: Meaningful package for growth-stage, negotiable for enterprise
 

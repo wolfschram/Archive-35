@@ -1,0 +1,16 @@
+{
+  "name": "job-pipeline",
+  "version": "1.0.0",
+  "description": "Wolf's Job Search Pipeline — track applications, automate scoring, generate cover letters with Problem→Product→Result framework",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "init-db": "node init-db.js",
+    "analyze": "node feedback-analyzer.js"
+  },
+  "dependencies": {
+    "better-sqlite3": "^11.7.0",
+    "cors": "^2.8.5",
+    "express": "^4.21.0"
+  }
+}
